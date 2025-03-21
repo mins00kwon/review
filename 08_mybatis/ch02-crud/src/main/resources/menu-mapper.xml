@@ -19,4 +19,43 @@
               , orderable_status
            from tbl_menu
     </select>
+    <select id="selectMenuByMenuCode" resultMap="menuResultMap" parameterType="_int">
+        Select
+                menu_code
+              , menu_name
+              , menu_price
+              , category_code
+              , orderable_status
+           from tbl_menu
+          where menu_code=#{menuCode}
+    </select>
+    <insert id="insertMenu" parameterType="MenuDTO">
+        Insert
+          into tbl_menu
+        (
+          menu_name
+        , menu_price
+        , category_code
+        , orderable_status
+        )
+        values
+        (
+          #{menuName}
+        , #{menuPrice}
+        , #{categoryCode}
+        , 'y'
+        )
+    </insert>
+    <update id="updateMenu" parameterType="MenuDTO">
+        update
+                tbl_menu
+            set menu_name=#{menuName}
+              , menu_price=#{menuPrice}
+          where menu_code=#{menuCode}
+    </update>
+    <delete id="deleteMenu" parameterType="_int">
+        delete
+          from tbl_menu
+         where menu_code=#{menuCode}
+    </delete>
 </mapper>

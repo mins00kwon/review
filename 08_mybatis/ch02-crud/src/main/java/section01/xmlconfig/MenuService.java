@@ -18,4 +18,38 @@ public class MenuService {
         List<MenuDTO> resultMenuList = menuDAO.selectAllMenus(sqlSession);
         return resultMenuList;
     }
+
+    public MenuDTO findMenuByMenuCode(int menuCode) {
+        System.out.println("start::MenuService.findMenuByMenuCode");
+        SqlSession sqlSession=getSqlSession();
+        MenuDTO resultMenu = menuDAO.selecMenuByMenuCode(sqlSession, menuCode);
+        return resultMenu;
+    }
+
+    public int registMenu(MenuDTO menu) {
+        System.out.println("start::MenuService.registMenu");
+        SqlSession sqlSession=getSqlSession();
+        int result = menuDAO.insertMenu(sqlSession, menu);
+        sqlSession.commit();
+        sqlSession.close();
+        return result;
+    }
+
+    public int modifyMenu(MenuDTO menu) {
+        System.out.println("start::MenuService.modifyMenu");
+        SqlSession sqlSession=getSqlSession();
+        int result = menuDAO.updateMenu(sqlSession, menu);
+        sqlSession.commit();
+        sqlSession.close();
+        return result;
+    }
+
+    public int removeMenuByMenuCode(int menuCode) {
+        System.out.println("start::MenuService.removeMenuByMenuCode");
+        SqlSession sqlSession=getSqlSession();
+        int result = menuDAO.deleteMenu(sqlSession, menuCode);
+        sqlSession.commit();
+        sqlSession.close();
+        return result;
+    }
 }
