@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="section03.remix.MenuMapper">
+    <resultMap id="menuResultMap" type="section03.remix.MenuDTO">
+        <id property="menuCode" column="MENU_CODE"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="menuPrice" column="MENU_PRICE"/>
+        <result property="categoryCode" column="CATEGORY_CODE"/>
+        <result property="orderableStatus" column="ORDERABLE_STATUS"/>
+    </resultMap>
+    <select id="selectAllMenus" resultMap="menuResultMap">
+        SELECT
+        MENU_CODE
+        , MENU_NAME
+        , MENU_PRICE
+        , CATEGORY_CODE
+        , ORDERABLE_STATUS
+        FROM TBL_MENU
+    </select>
+    <select id="selectMenu" resultMap="menuResultMap" parameterType="_int">
+        SELECT
+        MENU_CODE
+        , MENU_NAME
+        , MENU_PRICE
+        , CATEGORY_CODE
+        , ORDERABLE_STATUS
+        FROM TBL_MENU
+        where menu_code=#{menuCode}
+    </select>
+    <insert id="insertMenu" parameterType="MenuDTO">
+        insert
+        into tbl_menu
+        (menu_name, menu_price, category_code, orderable_status)
+        values
+        (#{menuName}, #{menuPrice}, #{categoryCode}, 'y')
+    </insert>
+    <update id="updateMenu" parameterType="MenuDTO">
+        update tbl_menu
+        set menu_name=#{menuName},
+            menu_price=#{menuPrice}
+        where menu_code=#{menuCode}
+    </update>
+    <delete id="deleteMenu" parameterType="_int">
+        delete from tbl_menu
+        where menu_code=#{menuCode}
+    </delete>
+</mapper>

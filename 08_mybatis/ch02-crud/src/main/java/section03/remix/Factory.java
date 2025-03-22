@@ -10,20 +10,24 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 public class Factory {
 
+    private static SqlSessionFactory sqlSessionFactory;
+
     private static String driver = "com.mysql.cj.jdbc.Driver";
     private static String url = "jdbc:mysql://localhost:3306/menudb";
     private static String user = "root";
     private static String password = "hosp0316!!";
-    private static SqlSessionFactory sqlSessionFactory;
-    public static SqlSession getSqlSession() {
-        if (sqlSessionFactory == null) {
-            Environment environment=new Environment("development",
+
+    public static SqlSession getSession(){
+        if(sqlSessionFactory == null){
+            Environment environment=new Environment("dev",
                     new JdbcTransactionFactory(),
                     new PooledDataSource(driver,url,user,password));
             Configuration configuration = new Configuration(environment);
+            configuration.getTypeAliasRegistry().registerAlias(MenuDTO.class);
             configuration.addMapper(MenuMapper.class);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         }
         return sqlSessionFactory.openSession();
     }
+
 }

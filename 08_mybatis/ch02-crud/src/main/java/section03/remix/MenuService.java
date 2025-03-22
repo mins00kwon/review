@@ -1,7 +1,6 @@
 package section03.remix;
 
-
-import static section02.javaconfig.Factory.getSqlSession;
+import static section03.remix.Factory.getSession;
 
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
@@ -10,24 +9,21 @@ public class MenuService {
     private MenuMapper menuMapper;
 
     public List<MenuDTO> findAllMenus() {
-        System.out.println("start::MenuService.findAllMenus");
-        SqlSession sqlSession=getSqlSession();
+        SqlSession sqlSession=getSession();
         menuMapper=sqlSession.getMapper(MenuMapper.class);
-        List<MenuDTO> resultMenuList=menuMapper.selectAllMenus();
-        sqlSession.close();
-        return resultMenuList;
+        List<MenuDTO> result=menuMapper.selectAllMenus();
+        return result;
     }
 
-    public MenuDTO findByMenuCode(int menuCode) {
-        SqlSession sqlSession=getSqlSession();
+    public MenuDTO findMenuByMenuCode(int menuCode) {
+        SqlSession sqlSession=getSession();
         menuMapper=sqlSession.getMapper(MenuMapper.class);
-        MenuDTO resultMenu = menuMapper.selectMenu(menuCode);
-        sqlSession.close();
-        return resultMenu;
+        MenuDTO result = menuMapper.selectMenu(menuCode);
+        return result;
     }
 
     public int registMenu(MenuDTO menu) {
-        SqlSession sqlSession=getSqlSession();
+        SqlSession sqlSession=getSession();
         menuMapper=sqlSession.getMapper(MenuMapper.class);
         int result = menuMapper.insertMenu(menu);
         sqlSession.commit();
@@ -36,7 +32,7 @@ public class MenuService {
     }
 
     public int modifyMenu(MenuDTO menu) {
-        SqlSession sqlSession=getSqlSession();
+        SqlSession sqlSession=getSession();
         menuMapper=sqlSession.getMapper(MenuMapper.class);
         int result = menuMapper.updateMenu(menu);
         sqlSession.commit();
@@ -45,11 +41,12 @@ public class MenuService {
     }
 
     public int removeMenu(int menuCode) {
-        SqlSession sqlSession=getSqlSession();
+        SqlSession sqlSession=getSession();
         menuMapper=sqlSession.getMapper(MenuMapper.class);
         int result = menuMapper.deleteMenu(menuCode);
         sqlSession.commit();
         sqlSession.close();
+
         return result;
     }
 }

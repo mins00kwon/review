@@ -11,49 +11,45 @@ public class MenuController {
     }
 
     public void findAllMenus() {
-        System.out.println("start::menuService.findAllMenus()");
-        List<MenuDTO> menuList = menuService.findAllMenus();
-        if (menuList.isEmpty()) {
-            System.out.println("No menus found");
-        }else {
-            System.out.println("Found " + menuList.size() + " menus");
-            menuList.forEach(System.out::println);
-        }
+        List<MenuDTO> result=menuService.findAllMenus();
+        result.forEach(System.out::println);
     }
 
     public void findMenuByMenuCode(Map<String, String> stringStringMap) {
-        System.out.println("start::menuService.findMenuByMenuCode(stringStringMap)");
-        int menuCode = Integer.parseInt(stringStringMap.get("menuCode"));
-        MenuDTO menu = menuService.findByMenuCode(menuCode);
-        System.out.println("menu = " + menu);
+        int menuCode=Integer.parseInt(stringStringMap.get("menuCode"));
+        MenuDTO result=menuService.findMenuByMenuCode(menuCode);
+        System.out.println(result);
     }
 
     public void registMenu(Map<String, String> stringStringMap) {
-        System.out.println("start::menuService.registMenu(stringStringMap)");
         String menuName = stringStringMap.get("menuName");
-        int menuPrice = Integer.parseInt(stringStringMap.get("menuPrice"));
-        int categoryCode = Integer.parseInt(stringStringMap.get("categoryCode"));
+        int menuPrice = Integer.valueOf(stringStringMap.get("menuPrice"));
+        int categoryCode = Integer.valueOf(stringStringMap.get("categoryCode"));
+
         MenuDTO menu = new MenuDTO();
         menu.setMenuName(menuName);
         menu.setMenuPrice(menuPrice);
         menu.setCategoryCode(categoryCode);
+
         int result = menuService.registMenu(menu);
+        System.out.println(result==1?"success":"fail");
     }
 
-    public void modifyMenu(Map<String, String> stringStringMap) {
-        System.out.println("start::menuService.modifyMenu(stringStringMap)");
-        int menuCode = Integer.parseInt(stringStringMap.get("menuCode"));
-        String menuName = stringStringMap.get("menuName");
-        int menuPrice = Integer.parseInt(stringStringMap.get("menuPrice"));
+    public void modifyMenu(Map<String, String> parameter) {
+        int menuCode = Integer.valueOf(parameter.get("menuCode"));
+        String menuName = parameter.get("menuName");
+        int menuPrice = Integer.valueOf(parameter.get("menuPrice"));
+
         MenuDTO menu = new MenuDTO();
+        menu.setMenuCode(menuCode);
         menu.setMenuName(menuName);
         menu.setMenuPrice(menuPrice);
-        menu.setMenuCode(menuCode);
+
         int result = menuService.modifyMenu(menu);
+        System.out.println(result==1?"success":"fail");
     }
 
     public void removeMenu(Map<String, String> stringStringMap) {
-        System.out.println("start::menuService.removeMenu(stringStringMap)");
         int menuCode = Integer.parseInt(stringStringMap.get("menuCode"));
         int result = menuService.removeMenu(menuCode);
         System.out.println(result==1?"success":"fail");
