@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="section01.xmlmapper.ElementMapper">
+    <resultMap id="menuResultMap1" type="MenuDTO">
+        <id property="menuCode" column="MENU_CODE"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="menuPrice" column="MENU_PRICE"/>
+        <result property="categoryCode" column="CATEGORY_CODE"/>
+    </resultMap>
+    <resultMap id="menuResultMap2" type="MenuDTO" extends="menuResultMap1">
+        <result property="orderableStatus" column="ORDERABLE_STATUS"/>
+    </resultMap>
+    <select id="selectResultMapTest" resultMap="menuResultMap1">
+        SELECT
+        A.MENU_CODE
+        , A.MENU_NAME
+        , A.MENU_PRICE
+        , A.CATEGORY_CODE
+        , A.ORDERABLE_STATUS
+        FROM TBL_MENU A
+        WHERE A.ORDERABLE_STATUS = 'Y'
+    </select>
+    <select id="selectResultMapAssociationTest" resultMap="menuResultMap2">
+        SELECT
+        A.MENU_CODE
+        , A.MENU_NAME
+        , A.MENU_PRICE
+        , A.CATEGORY_CODE
+        , A.ORDERABLE_STATUS
+        FROM TBL_MENU A
+        WHERE A.ORDERABLE_STATUS = 'N'
+    </select>
+    <resultMap id="categoryAndMenuResultMap" type="CategoryAndMenuDTO">
+        <id property="categoryCode" column="CATEGORY_CODE"/>
+        <result property="categoryName" column="CATEGORY_NAME"/>
+        <result property="refCategoryCode" column="REF_CATEGORY_CODE"/>
+        <collection property="menus" ofType="MenuDTO">
+            <id property="menuCode" column="MENU_CODE"/>
+            <result property="menuName" column="MENU_NAME"/>
+            <result property="menuPrice" column="MENU_PRICE"/>
+            <result property="categoryCode" column="CATEGORY_CODE"/>
+            <result property="orderableStatus" column="ORDERABLE_STATUS"/>
+        </collection>
+    </resultMap>
+    <select id="selectResultMapCollectionTest" resultMap="categoryAndMenuResultMap">
+        SELECT
+        B.MENU_CODE
+        , B.MENU_NAME
+        , B.MENU_PRICE
+        , B.CATEGORY_CODE
+        , A.CATEGORY_NAME
+        , A.REF_CATEGORY_CODE
+        , B.ORDERABLE_STATUS
+        FROM TBL_CATEGORY A
+        JOIN TBL_MENU B ON (A.CATEGORY_CODE = B.CATEGORY_CODE)
+        WHERE B.ORDERABLE_STATUS = 'n'
+    </select>
+
+    <resultMap id="menuAndCategoryResultMap"
+               type="section01.xmlmapper.MenuAndCategoryDTO">
+        <id property="menuCode" column="MENU_CODE"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="menuPrice" column="MENU_PRICE"/>
+        <result property="orderableStatus" column="ORDERABLE_STATUS"/>
+        <association property="category" javaType="section01.xmlmapper.CategoryDTO">
+            <id property="categoryCode" column="CATEGORY_CODE"/>
+            <result property="categoryName" column="CATEGORY_NAME"/>
+            <result property="refCategoryCode" column="REF_CATEGORY_CODE"/>
+        </association>
+    </resultMap>
+    <select id="selectMenuWithCategory" resultMap="menuAndCategoryResultMap">
+        select
+        a.menu_code,
+        a.menu_name,
+        a.menu_price,
+        a.orderable_status,
+        b.category_code,
+        b.category_name,
+        b.ref_category_code
+        from tbl_menu a
+        join tbl_category b on(a.category_code=b.category_code)
+        where a.orderable_status='n'
+    </select>
+</mapper>
