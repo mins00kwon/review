@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="section01.xml.MenuMapper">
+    <resultMap id="menuResultMap" type="MenuDTO">
+        <id property="menuCode" column="MENU_CODE"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="menuPrice" column="MENU_PRICE"/>
+        <result property="categoryCode" column="CATEGORY_CODE"/>
+        <result property="orderableStatus" column="ORDERABLE_STATUS"/>
+    </resultMap>
+    <select id="seletMenuByPrice" resultMap="menuResultMap">
+        select
+               a.menu_code
+             , a.menu_name
+             , a.menu_price
+             , a.category_code
+             , a.orderable_status
+          from tbl_menu a
+         where a.orderable_status='y'
+        <if test="maxPrice gte 0 and maxPrice lte 10000">
+            and a.menu_price between 0 and #{maxPrice}
+        </if>
+        <if test="maxPrice gt 10000">
+            and  #{maxPrice} > a.menu_price
+        </if>
+    </select>
+    <select id="searchMenu" resultMap="menuResultMap" parameterType="section01.xml.SearchCriteria">
+        select
+               a.menu_code
+             , a.menu_name
+             , a.menu_price
+             , a.category_code
+             , a.orderable_status
+          from tbl_menu a
+        <if test="condition == 'category'">
+            JOIN TBL_CATEGORY B ON (A.CATEGORY_CODE = B.CATEGORY_CODE)
+        </if>
+        WHERE ORDERABLE_STATUS = 'Y'
+        <if test="condition == 'name'">
+            AND A.MENU_NAME LIKE CONCAT('%', #{value}, '%')
+        </if>
+        <if test="condition == 'category'">
+            AND B.CATEGORY_NAME = #{value}
+        </if>
+    </select>
+    <select id="searchMenuBySupCategory"
+            parameterType="section01.xml.SearchCriteria"
+            resultMap="menuResultMap">
+        SELECT
+        A.MENU_CODE
+        , A.MENU_NAME
+        , A.MENU_PRICE
+        , A.CATEGORY_CODE
+        , A.ORDERABLE_STATUS
+        FROM TBL_MENU A
+        WHERE ORDERABLE_STATUS = 'Y'
+        <choose>
+            <when test="value eq '식사'">
+                AND A.CATEGORY_CODE IN (4, 5, 6, 7)
+            </when>
+            <when test="value eq '디저트'">
+                and a.category_code in (11, 12)
+            </when>
+            <when test="value eq '음료'">
+                AND A.CATEGORY_CODE IN (8, 9, 10)
+            </when>
+        </choose>
+    </select>
+    <select id="searchMenuByRandomMenuCode"
+            resultMap="menuResultMap"
+            parameterType="list">
+        SELECT
+        A.MENU_CODE
+        , A.MENU_NAME
+        , A.MENU_PRICE
+        , A.CATEGORY_CODE
+        , A.ORDERABLE_STATUS
+        FROM TBL_MENU A
+        WHERE ORDERABLE_STATUS = 'Y'
+        and a.menu_code in
+        <foreach collection="list"
+                 item="menuCode" open="(" close=")" separator=", ">
+            #{menuCode}
+        </foreach>
+    </select>
+    <select id="searchMenuByCodeOrSearchAll" parameterType="com.ohgiraffers.section01.xml.SearchCriteria"
+            resultMap="menuResultMap">
+        SELECT
+        A.MENU_CODE
+        , A.MENU_NAME
+        , A.MENU_PRICE
+        , A.CATEGORY_CODE
+        , A.ORDERABLE_STATUS
+        FROM TBL_MENU A
+        <if test="condition != null and condition == 'menuCode'">
+            WHERE A.MENU_CODE = ${value}
+        </if>
+    </select>
+</mapper>
